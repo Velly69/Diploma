@@ -7,14 +7,14 @@
 
 import UIKit
 
-class MovieCell: UICollectionViewCell {
+final class MovieCell: UICollectionViewCell {
     static let reuseID = "MovieCell"
     let posterImageView = MovieImageView(frame: .zero)
-    let movieNameLabel = MovieTitleLabel(fontSize: 24, textColor: .black)
+    let movieNameLabel = MovieTitleLabel(fontSize: 24, textColor: .black, weight: .regular, alignment: .center)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureCell()
+        setupCell()
     }
     
     required init?(coder: NSCoder) {
@@ -26,7 +26,7 @@ class MovieCell: UICollectionViewCell {
         movieNameLabel.text = movie.title
     }
     
-    private func configureCell() {
+    private func setupCell() {
         addSubviews(posterImageView, movieNameLabel)
         
         let padding: CGFloat = 8

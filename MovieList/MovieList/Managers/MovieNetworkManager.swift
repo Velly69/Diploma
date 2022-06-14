@@ -27,11 +27,14 @@ enum MovieListEndpoint: String {
 protocol MovieService {
     func getMovies(from endpoint: MovieListEndpoint, completion: @escaping (Result<MovieResponse, MovieError>) -> ())
     func getMovie(id: Int, completion: @escaping (Result<MovieInfo, MovieError>) -> ())
-    func searchMovies(query: String, completion: @escaping (Result<MovieResponse, MovieError>) -> ())
     func getPeople(completion: @escaping (Result<PopularActorsResponse, MovieError>) -> ())
+    func getPersonInfo(id: Int, completion: @escaping (Result<PersonInfo, MovieError>) -> ())
+    func getPersonShows(id: Int, completion: @escaping (Result<PersonMovieResponse, MovieError>) -> ())
+    func downloadImage(from urlString: String, comleted: @escaping (UIImage?) -> ())
+    func searchMovies(query: String, completion: @escaping (Result<MovieResponse, MovieError>) -> ())
 }
 
-class MovieNetworkManager {
+final class MovieNetworkManager {
     static let shared = MovieNetworkManager()
     private let baseURL = "https://api.themoviedb.org/3"
     private let apiKey = "ca7fedc5050f40843d616562d625fbd8"
@@ -177,6 +180,96 @@ class MovieNetworkManager {
             do {
                 let actorsResponse = try self.jsonDecoder.decode(PopularActorsResponse.self, from: data)
                 completion(.success(actorsResponse))
+            } catch {
+                completion(.failure(.invalidData))
+            }
+        }
+        
+        task.resume()
+    }
+    
+    func getPersonInfo(id: Int, completion: @escaping (Result<PersonInfo, MovieError>) -> ()) {
+        guard let url = URL(string: "\(baseURL)/person/\(id)") else {
+            completion(.failure(.invalidEndpoint))
+            return
+        }
+        
+        guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            completion(.failure(.invalidEndpoint))
+            return
+        }
+        
+        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
+        
+        guard let finalURL = urlComponents.url else {
+            completion(.failure(.invalidEndpoint))
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: finalURL) { (data, response, error) in
+            if error != nil {
+                completion(.failure(.apiError))
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                completion(.failure(.invalidResponse))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(.invalidData))
+                return
+            }
+            
+            do {
+                let personInfo = try self.jsonDecoder.decode(PersonInfo.self, from: data)
+                completion(.success(personInfo))
+            } catch {
+                completion(.failure(.invalidData))
+            }
+        }
+        
+        task.resume()
+    }
+    
+    func getPersonShows(id: Int, completion: @escaping (Result<PersonMovieResponse, MovieError>) -> ()) {
+        guard let url = URL(string: "\(baseURL)/person/\(id)/movie_credits") else {
+            completion(.failure(.invalidEndpoint))
+            return
+        }
+        
+        guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            completion(.failure(.invalidEndpoint))
+            return
+        }
+        
+        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
+        
+        guard let finalURL = urlComponents.url else {
+            completion(.failure(.invalidEndpoint))
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: finalURL) { (data, response, error) in
+            if error != nil {
+                completion(.failure(.apiError))
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                completion(.failure(.invalidResponse))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(.invalidData))
+                return
+            }
+            
+            do {
+                let movieResponse = try self.jsonDecoder.decode(PersonMovieResponse.self, from: data)
+                completion(.success(movieResponse))
             } catch {
                 completion(.failure(.invalidData))
             }

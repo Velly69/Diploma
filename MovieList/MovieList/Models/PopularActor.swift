@@ -20,7 +20,7 @@ struct PopularActorsResponse: Codable {
 }
 
 struct PopularActor: Codable, Hashable, Identifiable {
-    var id: Int
+    let id: Int
     let name: String
     let knownForDepartment: String
     let profilePath: String?

@@ -7,10 +7,9 @@
 
 import UIKit
 
-class MovieAlertVC: UIViewController {
-    
+final class MovieAlertVC: UIViewController {
     let containerView = AlertContainerView()
-    let titleLabel = MovieTitleLabel(fontSize: 26, textColor: .black)
+    let titleLabel = MovieTitleLabel(fontSize: 26, textColor: .black, weight: .bold, alignment: .center)
     let messageLabel = MovieBodyLabel(frame: .zero)
     let actionButton = MovieButton(backgroundColor: .systemRed, title: "OK")
     
@@ -37,13 +36,13 @@ class MovieAlertVC: UIViewController {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.75)
         containerView.addSubviews(titleLabel, messageLabel, actionButton)
         
-        configureContainerView()
-        configureTitleLabel()
-        configureActionButton()
-        configureMessageLabel()
+        setupContainerView()
+        setupTitleLabel()
+        setupActionButton()
+        setupMessageLabel()
     }
     
-    private func configureContainerView() {
+    private func setupContainerView() {
         NSLayoutConstraint.activate([
             containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -52,7 +51,7 @@ class MovieAlertVC: UIViewController {
         ])
     }
     
-    private func configureTitleLabel() {
+    private func setupTitleLabel() {
         titleLabel.text = alertTitle ?? "Just awesome title :)"
         
         NSLayoutConstraint.activate([
@@ -63,7 +62,7 @@ class MovieAlertVC: UIViewController {
         ])
     }
     
-    private func configureActionButton() {
+    private func setupActionButton() {
         actionButton.setTitle(alertButtonTitle, for: .normal)
         actionButton.addTarget(self, action: #selector(dismissAlert), for: .touchUpInside)
         
@@ -75,7 +74,7 @@ class MovieAlertVC: UIViewController {
         ])
     }
     
-    private func configureMessageLabel() {
+    private func setupMessageLabel() {
         messageLabel.text = alertMessage ?? "Something went wrong..."
         
         NSLayoutConstraint.activate([
@@ -89,5 +88,4 @@ class MovieAlertVC: UIViewController {
     @objc private func dismissAlert() {
         dismiss(animated: true, completion: nil)
     }
-
 }

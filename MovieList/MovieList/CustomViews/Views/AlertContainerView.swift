@@ -7,8 +7,7 @@
 
 import UIKit
 
-class AlertContainerView: UIView {
-
+final class AlertContainerView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -25,5 +24,4 @@ class AlertContainerView: UIView {
         layer.borderColor = UIColor.white.cgColor
         translatesAutoresizingMaskIntoConstraints = false
     }
-    
 }

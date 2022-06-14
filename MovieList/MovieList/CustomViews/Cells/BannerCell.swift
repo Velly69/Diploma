@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BannerCell: UICollectionViewCell {
+final class BannerCell: UICollectionViewCell {
     
     static var nib: UINib {
         UINib(nibName: "BannerCell", bundle: nil)
@@ -28,5 +28,11 @@ class BannerCell: UICollectionViewCell {
         titleLabel.text = movie.title
         subtitleLabel.text = movie.ratingText
         imageView.downloadPosterImage(fromURL: movie.posterStringURL)
+    }
+    
+    func setup(personMovie: PersonMovie) {
+        titleLabel.text = personMovie.title
+        subtitleLabel.text = personMovie.character
+        imageView.downloadPosterImage(fromURL: personMovie.backdropURL)
     }
 }

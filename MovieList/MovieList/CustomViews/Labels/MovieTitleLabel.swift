@@ -7,24 +7,24 @@
 
 import UIKit
 
-class MovieTitleLabel: UILabel {
-    
+final class MovieTitleLabel: UILabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configure()
+        setup()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    convenience init(fontSize: CGFloat, textColor: UIColor) {
+    convenience init(fontSize: CGFloat, textColor: UIColor, weight: UIFont.Weight, alignment: NSTextAlignment) {
         self.init(frame: .zero)
-        self.font = UIFont.systemFont(ofSize: fontSize)
+        self.font = UIFont.systemFont(ofSize: fontSize, weight: weight)
+        self.textAlignment = alignment
         self.textColor = textColor
     }
     
-    private func configure() {
+    private func setup() {
         adjustsFontForContentSizeCategory = true
         adjustsFontSizeToFitWidth = true
         minimumScaleFactor = 0.25

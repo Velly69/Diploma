@@ -9,13 +9,9 @@ import Foundation
 import UIKit
 import SwiftUI
 
-enum SectionSearch {
-    case foundMovies
-}
-
 typealias LayoutSectionMovieTuple = (layout: SectionSearch, items: [MovieSearch])
 
-class MovieSearchViewController: UIViewController {
+final class MovieSearchViewController: UIViewController {
     var store: [LayoutSectionMovieTuple] = []
     var collectionView: UICollectionView!
     var dataSource: UICollectionViewDiffableDataSource<SectionSearch, MovieSearch>!
@@ -23,8 +19,8 @@ class MovieSearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setViewController()
-        setCollectionView()
+        setupViewController()
+        setupCollectionView()
         setupCellAndSupplementaryRegistrations()
         setSearchViewController()
         setDataSource()
@@ -35,11 +31,12 @@ class MovieSearchViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
-    private func setViewController() {
+    // MARK: - UI
+    private func setupViewController() {
         view.backgroundColor = .systemBackground
     }
     
-    private func setCollectionView() {
+    private func setupCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.delegate = self
@@ -54,14 +51,12 @@ class MovieSearchViewController: UIViewController {
         
     }
     
-    func createLayout() -> UICollectionViewLayout {
+    private func createLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout.init { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
             let sectionIdentifier = self.dataSource.snapshot().sectionIdentifiers[sectionIndex]
             switch sectionIdentifier {
             case .foundMovies:
-                var listConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
-//                listConfig.headerMode = .supplementary
-//                listConfig.footerMode = .supplementary
+                let listConfig = UICollectionLayoutListConfiguration(appearance: .grouped)
                 return NSCollectionLayoutSection.list(using: listConfig, layoutEnvironment: layoutEnvironment)
             }
         }
@@ -88,7 +83,8 @@ class MovieSearchViewController: UIViewController {
         navigationItem.searchController = searchController
     }
     
-    func getMovies(movieName: String) {
+    // MARK: - Business Logic
+    private func getMovies(movieName: String) {
         MovieNetworkManager.shared.searchMovies(query: movieName) { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -108,23 +104,18 @@ class MovieSearchViewController: UIViewController {
         snapshot.appendItems(movies, toSection: .foundMovies)
         dataSource.apply(snapshot, animatingDifferences: true)
     }
-    
-//    private func updateData(with store: [LayoutSectionMovieTuple]) {
-//        var snapshot = NSDiffableDataSourceSnapshot<SectionSearch, MovieSearch>()
-//        snapshot.appendSections([.foundMovies])
-//        snapshot.appendItems(store[0].items, toSection: .foundMovies)
-//        dataSource.apply(snapshot, animatingDifferences: true)
-//    }
 }
 
+// MARK: - CollectionViewDelegate Methods
 extension MovieSearchViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let movie = store[0].items[indexPath.row]
-        let movieInfo = MovieInfoVC(id: movie.id)
+        let movieInfo = MovieInfoViewController(id: movie.id)
         navigationController?.pushViewController(movieInfo, animated: true)
     }
 }
 
+// MARK: - SearchController Methods
 extension MovieSearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter = searchController.searchBar.text, !filter.isEmpty else {

@@ -10,28 +10,28 @@ import SwiftUI
 
 typealias LayoutActorsSectionItemsTuple = (title: String, layout: ActorsSectionLayout, items: [PopularActor])
 
-class PeopleViewController: UIViewController {
-    
+final class PeopleViewController: UIViewController {
     var backingStore: [LayoutActorsSectionItemsTuple] = []
     
     var dataSource: UICollectionViewDiffableDataSource<ActorsSectionLayout, PopularActor>! = nil
     var collectionView: UICollectionView! = nil
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        getMovies()
-        configureHierarchy()
-        setupCellAndSupplementaryRegistrations()
-        configureDataSource()
-        navigationController?.hidesBarsOnSwipe = true
-    }
     
     var avatarCellRegistration: UICollectionView.CellRegistration<AvatarCell, PopularActor>!
     var columnCellRegistration: UICollectionView.CellRegistration<ColumnCell, PopularActor>!
     var headerRegistration: UICollectionView.SupplementaryRegistration<SectionHeaderTextReusableView>!
     var footerRegistration: UICollectionView.SupplementaryRegistration<SeparatorCollectionReusableView>!
     
-    func configureHierarchy() {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        getMovies()
+        setupCollectionView()
+        setupCellAndSupplementaryRegistrations()
+        setupDataSource()
+        navigationController?.hidesBarsOnSwipe = true
+    }
+    
+    // MARK: - UI
+    private func setupCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
@@ -39,7 +39,7 @@ class PeopleViewController: UIViewController {
         view.addSubview(collectionView)
     }
     
-    func setupCellAndSupplementaryRegistrations() {
+    private func setupCellAndSupplementaryRegistrations() {
         columnCellRegistration = .init(cellNib: ColumnCell.nib, handler: { (cell, _, item) in
             cell.setup(item)
         })
@@ -56,7 +56,7 @@ class PeopleViewController: UIViewController {
         footerRegistration = .init(elementKind: UICollectionView.elementKindSectionFooter, handler: { (_, _, _) in })
     }
     
-    func createLayout() -> UICollectionViewLayout {
+    private func createLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout.init { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
             let sectionIdentifier = self.dataSource.snapshot().sectionIdentifiers[sectionIndex]
             switch sectionIdentifier {
@@ -93,7 +93,7 @@ class PeopleViewController: UIViewController {
         NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(1)), elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
     }
     
-    func configureDataSource() {
+    private func setupDataSource() {
         dataSource = UICollectionViewDiffableDataSource<ActorsSectionLayout, PopularActor>(collectionView: collectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, item: PopularActor) -> UICollectionViewCell? in
             guard let sectionIdentifier = self.dataSource.snapshot().sectionIdentifier(containingItem: item) else {
@@ -116,13 +116,14 @@ class PeopleViewController: UIViewController {
         }
     }
     
+    // MARK: - Business Logic
     private func getMovies() {
         MovieNetworkManager.shared.getPeople { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let response):
                 self.updateUI(title: "Famous Directors", section: ActorsSectionLayout.popularDirectors, actors: response.directors)
-                self.updateUI(title: "Famous Actors", section: ActorsSectionLayout.popularActorsCarousel, actors: response.actors)
+                self.updateUI(title: "Famous Actors", section: ActorsSectionLayout.popularActorsCarousel, actors: Array(response.actors.prefix(10)))
             case .failure(let error):
                 self.showAlertVC(title: "Have some troubles", message: error.rawValue, buttonTile: "OK")
             }
@@ -144,11 +145,13 @@ class PeopleViewController: UIViewController {
     }
 }
 
+// MARK: - CollectionViewDelegate Methods
+
 extension PeopleViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = backingStore[indexPath.section]
-        let movie = section.items[indexPath.row]
-        let movieInfo = MovieInfoVC(id: movie.id)
+        let actor = section.items[indexPath.row]
+        let movieInfo = PersonInfoDetailViewController(personID: actor.id)
         navigationController?.pushViewController(movieInfo, animated: true)
     }
 }

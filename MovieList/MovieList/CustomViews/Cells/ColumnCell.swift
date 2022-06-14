@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ColumnCell: UICollectionViewCell {
+final class ColumnCell: UICollectionViewCell {
     static var nib: UINib {
         UINib(nibName: "ColumnCell", bundle: nil)
     }

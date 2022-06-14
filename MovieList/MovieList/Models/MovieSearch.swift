@@ -12,6 +12,6 @@ struct MovieSearchResponse: Codable {
 }
 
 struct MovieSearch: Codable, Identifiable, Hashable {
-    var title: String
-    var id: Int
+    let title: String
+    let id: Int
 }

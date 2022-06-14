@@ -10,28 +10,28 @@ import SwiftUI
 
 typealias LayoutSectionItemsTuple = (title: String, layout: SectionLayout, items: [Movie])
 
-class MovieSectionViewController: UIViewController {
-    
+final class MovieSectionViewController: UIViewController {
     var backingStore: [LayoutSectionItemsTuple] = []
     
     var dataSource: UICollectionViewDiffableDataSource<SectionLayout, Movie>! = nil
     var collectionView: UICollectionView! = nil
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        navigationItem.title = "Movie Library"
-        getMovies()
-        configureHierarchy()
-        setupCellAndSupplementaryRegistrations()
-        configureDataSource()
-        navigationController?.hidesBarsOnSwipe = true
-    }
-    
     var bannerCellRegistration: UICollectionView.CellRegistration<BannerCell, Movie>!
     var headerRegistration: UICollectionView.SupplementaryRegistration<SectionHeaderTextReusableView>!
     var footerRegistration: UICollectionView.SupplementaryRegistration<SeparatorCollectionReusableView>!
     
-    func configureHierarchy() {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationItem.title = "Movie Library"
+        getMovies()
+        setupCollectionView()
+        setupCellAndSupplementaryRegistrations()
+        setupDataSource()
+        navigationController?.hidesBarsOnSwipe = true
+    }
+    
+    // MARK: - UI
+    private func setupCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .systemBackground
@@ -39,7 +39,7 @@ class MovieSectionViewController: UIViewController {
         view.addSubview(collectionView)
     }
     
-    func setupCellAndSupplementaryRegistrations() {
+    private func setupCellAndSupplementaryRegistrations() {
         bannerCellRegistration = .init(cellNib: BannerCell.nib, handler: { (cell, _, item) in
             cell.setup(item)
         })
@@ -52,7 +52,7 @@ class MovieSectionViewController: UIViewController {
         footerRegistration = .init(elementKind: UICollectionView.elementKindSectionFooter, handler: { (_, _, _) in })
     }
     
-    func createLayout() -> UICollectionViewLayout {
+    private func createLayout() -> UICollectionViewLayout {
         UICollectionViewCompositionalLayout.init { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
             let sectionIdentifier = self.dataSource.snapshot().sectionIdentifiers[sectionIndex]
             switch sectionIdentifier {
@@ -78,7 +78,7 @@ class MovieSectionViewController: UIViewController {
         NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(1)), elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
     }
     
-    func configureDataSource() {
+    private func setupDataSource() {
         dataSource = UICollectionViewDiffableDataSource<SectionLayout, Movie>(collectionView: collectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, item: Movie) -> UICollectionViewCell? in
             guard let sectionIdentifier = self.dataSource.snapshot().sectionIdentifier(containingItem: item) else {
@@ -99,6 +99,7 @@ class MovieSectionViewController: UIViewController {
         }
     }
     
+    // MARK: - Business Logic
     private func getMovies() {
         MovieNetworkManager.shared.getMovies(from: .topRated) { [weak self] (result) in
             guard let self = self else { return }
@@ -147,11 +148,12 @@ class MovieSectionViewController: UIViewController {
     }
 }
 
+// MARK: - CollectionViewDelegate Methods
 extension MovieSectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let section = backingStore[indexPath.section]
         let movie = section.items[indexPath.row]
-        let movieInfo = MovieInfoVC(id: movie.id)
+        let movieInfo = MovieInfoViewController(id: movie.id)
         navigationController?.pushViewController(movieInfo, animated: true)
     }
 }

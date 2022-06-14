@@ -7,8 +7,7 @@
 
 import UIKit
 
-class MovieButton: UIButton {
-
+final class MovieButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -34,5 +33,4 @@ class MovieButton: UIButton {
         self.backgroundColor = backgroundColor
         setTitle(title, for: .normal)
     }
-    
 }

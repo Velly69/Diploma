@@ -7,19 +7,19 @@
 
 import UIKit
 
-class SeparatorCollectionReusableView: UICollectionReusableView {
+final class SeparatorCollectionReusableView: UICollectionReusableView {
     
     let separatorView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configure()
+        setup()
     }
     required init?(coder: NSCoder) {
         fatalError()
     }
     
-    func configure() {
+    func setup() {
         addSubview(separatorView)
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         let inset = CGFloat(16)

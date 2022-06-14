@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WatchLaterVC: MovieLoadingDataVC {
+final class WatchLaterVC: MovieLoadingDataVC {
     private let tableView = UITableView()
     private var watchLater: [Movie] = []
     
@@ -20,8 +20,8 @@ class WatchLaterVC: MovieLoadingDataVC {
     }
     
     override func viewDidLoad() {
-        configureViewController()
-        configureTableView()
+        setupViewController()
+        setupTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -29,12 +29,13 @@ class WatchLaterVC: MovieLoadingDataVC {
         getMoviesToWatch()
     }
     
-    private func configureViewController() {
+    // MARK: - UI
+    private func setupViewController() {
         view.backgroundColor = .systemBackground
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
-    private func configureTableView() {
+    private func setupTableView() {
         view.addSubview(tableView)
         tableView.frame = view.bounds
         tableView.delegate = self
@@ -43,6 +44,7 @@ class WatchLaterVC: MovieLoadingDataVC {
         tableView.register(WatchLaterCell.self, forCellReuseIdentifier: WatchLaterCell.reuseID)
     }
     
+    // MARK: - Business Logic
     private func getMoviesToWatch() {
         UserDefaultsManager.getMoviesToWatch { [weak self] (result) in
             guard let self = self else { return }
@@ -68,6 +70,7 @@ class WatchLaterVC: MovieLoadingDataVC {
     }
 }
 
+// MARK: - TableView Delegate and DataSource Methods
 extension WatchLaterVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return watchLater.count
@@ -83,7 +86,7 @@ extension WatchLaterVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let movieWL = watchLater[indexPath.row]
-        let destinationvVC = MovieInfoVC(id: movieWL.id)
+        let destinationvVC = MovieInfoViewController(id: movieWL.id)
         navigationController?.pushViewController(destinationvVC, animated: true)
     }
     
@@ -100,5 +103,4 @@ extension WatchLaterVC: UITableViewDelegate, UITableViewDataSource {
             print(error.rawValue)
         }
     }
-    
 }

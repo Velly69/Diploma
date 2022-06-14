@@ -8,13 +8,16 @@
 import Foundation
 
 struct MovieInfo: Codable, Identifiable {
-    var id: Int
-    var title: String
-    var posterPath: String
-    var releaseDate: String?
+    let id: Int
+    let title: String
+    let posterPath: String
+    let releaseDate: String?
     var credits: MovieCredit?
-    let genres: [MovieGenre]? = []
-    let voteAverage: Double? = 1.0
+    let overview: String
+    var backdropPath: String
+    let genres: [MovieGenre]?
+    let runtime: Int?
+    let voteAverage: Double
     
     static private let yearFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -26,11 +29,30 @@ struct MovieInfo: Codable, Identifiable {
         return "https://image.tmdb.org/t/p/w500\(posterPath)"
     }
     
+    var backdropStringURL: String {
+        return "https://image.tmdb.org/t/p/w500\(backdropPath)"
+    }
+    
     var yearText: String {
         guard let releaseDate = self.releaseDate, let date = Utils.dateFormatter.date(from: releaseDate) else {
             return "n/a"
         }
         return MovieInfo.yearFormatter.string(from: date)
+    }
+    
+    var genreText: String {
+        guard let genres = genres else { return "" }
+        return genres.first?.name ?? "n/a"
+    }
+    
+    var ratingText: String {
+        let rating = Int(voteAverage)
+        return "⭐️" + "\(rating)/10"
+    }
+    
+    var time: String {
+        guard let runtime = self.runtime, runtime > 0 else { return "n/a" }
+        return "\(runtime) min"
     }
     
     var cast: [MovieCast]? {
@@ -54,15 +76,25 @@ struct MovieInfo: Codable, Identifiable {
     }
 }
 
+struct MovieGenre: Codable, Hashable {
+    let name: String
+}
+
 struct MovieCredit: Codable {
     let cast: [MovieCast]
     let crew: [MovieCrew]
 }
 
-struct MovieCast: Codable, Identifiable {
+struct MovieCast: Codable, Identifiable, Hashable {
     let id: Int
     let character: String
     let name: String
+    
+    let profilePath: String?
+    
+    var profilePictureStringURL: String {
+        return "https://image.tmdb.org/t/p/w500\(profilePath ?? "")"
+    }
 }
 
 struct MovieCrew: Codable, Identifiable {

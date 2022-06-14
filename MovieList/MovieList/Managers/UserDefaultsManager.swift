@@ -11,7 +11,7 @@ enum ManagerActionType {
     case add, remove
 }
 
-class UserDefaultsManager {
+final class UserDefaultsManager {
     private static let defaults = UserDefaults.standard
     enum Keys { static let watchLater = "watch-later" }
     

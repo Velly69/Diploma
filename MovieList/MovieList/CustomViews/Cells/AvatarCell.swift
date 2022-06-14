@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AvatarCell: UICollectionViewCell {
+final class AvatarCell: UICollectionViewCell {
     static var nib: UINib {
         UINib(nibName: "AvatarCell", bundle: nil)
     }
@@ -18,6 +18,11 @@ class AvatarCell: UICollectionViewCell {
     func setup(actor: PopularActor) {
         textLabel.text = actor.name
         imageView.downloadPosterImage(fromURL: actor.profilePictureStringURL)
+    }
+    
+    func setup(cast: MovieCast) {
+        textLabel.text = cast.name
+        imageView.downloadPosterImage(fromURL: cast.profilePictureStringURL)
     }
 }
 

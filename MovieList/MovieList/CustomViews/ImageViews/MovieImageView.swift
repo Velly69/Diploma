@@ -7,17 +7,17 @@
 
 import UIKit
 
-class MovieImageView: UIImageView {
+final class MovieImageView: UIImageView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configure()
+        setup()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configure() {
+    private func setup() {
         clipsToBounds = true
         contentMode = .scaleAspectFit
         translatesAutoresizingMaskIntoConstraints = false

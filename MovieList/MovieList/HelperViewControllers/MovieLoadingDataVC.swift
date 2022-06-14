@@ -8,7 +8,6 @@
 import UIKit
 
 class MovieLoadingDataVC: UIViewController {
-    
     private var containerView: UIView!
     
     func showLoadingView() {

@@ -12,34 +12,18 @@ struct MovieResponse: Codable {
 }
 
 struct Movie: Codable, Identifiable, Hashable {
-    var title: String
-    var posterPath: String = ""
-    var backdropPath: String?
-    //let overview: String?
+    let title: String
+    let posterPath: String?
+    let backdropPath: String?
     let voteAverage: Double
-    var id: Int
-    //let runtime: Int?
-    
-    let genres: [MovieGenre]?
+    let id: Int
     
     var posterStringURL: String {
-        return "https://image.tmdb.org/t/p/w500\(posterPath)"
-    }
-    
-    var backdropURL: URL? {
-        return URL(string: "https://image.tmdb.org/t/p/w500\(backdropPath)")!
-    }
-    
-    var genreText: String {
-        genres?.first?.name ?? "n/a"
+        return "https://image.tmdb.org/t/p/w500\(posterPath ?? "")"
     }
     
     var ratingText: String {
         let rating = Int(voteAverage)
         return "⭐️" + "\(rating)/10"
     }
-}
-
-struct MovieGenre: Codable, Hashable {
-    let name: String
 }

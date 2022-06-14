@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SectionHeaderTextReusableView: UICollectionReusableView {
+final class SectionHeaderTextReusableView: UICollectionReusableView {
     static var nib: UINib {
         UINib(nibName: "SectionHeaderTextReusableView", bundle: nil)
     }

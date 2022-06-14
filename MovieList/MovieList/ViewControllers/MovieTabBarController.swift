@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MovieTabBarController: UITabBarController {
+final class MovieTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         UITabBar.appearance().tintColor = .systemRed

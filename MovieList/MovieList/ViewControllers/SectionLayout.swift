@@ -17,3 +17,15 @@ enum ActorsSectionLayout: Hashable {
     case popularActorsCarousel
     case popularDirectors
 }
+
+enum CastSectionLayout: Hashable {
+    case actorsCarousel
+}
+
+enum PersonMovieSectionLayout: Hashable {
+    case moviesCarousel
+}
+
+enum SectionSearch {
+    case foundMovies
+}

@@ -7,14 +7,14 @@
 
 import UIKit
 
-class WatchLaterCell: UITableViewCell {
+final class WatchLaterCell: UITableViewCell {
     static let reuseID = "WatchLaterCell"
     let posterImageView = MovieImageView(frame: .zero)
-    let posterNameLabel = MovieTitleLabel(fontSize: 24, textColor: .black)
+    let posterNameLabel = MovieTitleLabel(fontSize: 24, textColor: .black, weight: .regular, alignment: .center)
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        configureCell()
+        setupCell()
     }
     
     required init?(coder: NSCoder) {
@@ -26,7 +26,7 @@ class WatchLaterCell: UITableViewCell {
         posterNameLabel.text = movieWL.title
     }
     
-    private func configureCell() {
+    private func setupCell() {
         addSubviews(posterImageView, posterNameLabel)
         accessoryType = .disclosureIndicator
         let padding: CGFloat = 10
